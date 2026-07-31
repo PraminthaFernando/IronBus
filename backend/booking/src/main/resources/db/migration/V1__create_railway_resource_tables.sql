@@ -30,8 +30,8 @@ CREATE TABLE ib_routes (
 
 CREATE TABLE ib_route_stations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    route_id UUID NOT NULL REFERENCES routes(id),
-    station_id UUID NOT NULL REFERENCES stations(id),
+    route_id UUID NOT NULL REFERENCES ib_routes(id),
+    station_id UUID NOT NULL REFERENCES ib_stations(id),
     sequence_number INTEGER NOT NULL,
     distance_from_origin_km NUMERIC(8,2) NOT NULL,
     scheduled_offset_minutes INTEGER NOT NULL DEFAULT 0,
@@ -66,7 +66,7 @@ CREATE TABLE ib_trains (
 
 CREATE TABLE ib_coaches (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    train_id UUID NOT NULL REFERENCES trains(id),
+    train_id UUID NOT NULL REFERENCES ib_trains(id),
     coach_number VARCHAR(20) NOT NULL,
     travel_class VARCHAR(30) NOT NULL,
     reservation_mode VARCHAR(20) NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE ib_coaches (
 
 CREATE TABLE ib_seats (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    coach_id UUID NOT NULL REFERENCES coaches(id),
+    coach_id UUID NOT NULL REFERENCES ib_coaches(id),
     seat_number VARCHAR(20) NOT NULL,
     seat_type VARCHAR(20) NOT NULL,
     row_number INTEGER,
@@ -112,8 +112,8 @@ CREATE TABLE ib_seats (
 
 CREATE TABLE ib_journeys (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    train_id UUID NOT NULL REFERENCES trains(id),
-    route_id UUID NOT NULL REFERENCES routes(id),
+    train_id UUID NOT NULL REFERENCES ib_trains(id),
+    route_id UUID NOT NULL REFERENCES ib_routes(id),
     departure_time TIMESTAMPTZ NOT NULL,
     status VARCHAR(20) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -133,16 +133,16 @@ CREATE TABLE ib_journeys (
 );
 
 CREATE INDEX idx_route_stations_route_sequence
-    ON route_stations(route_id, sequence_number);
+    ON ib_route_stations(route_id, sequence_number);
 
 CREATE INDEX idx_coaches_train
-    ON coaches(train_id);
+    ON ib_coaches(train_id);
 
 CREATE INDEX idx_seats_coach
-    ON seats(coach_id);
+    ON ib_seats(coach_id);
 
 CREATE INDEX idx_journeys_route_departure
-    ON journeys(route_id, departure_time);
+    ON ib_journeys(route_id, departure_time);
 
 CREATE INDEX idx_journeys_train_departure
-    ON journeys(train_id, departure_time);
+    ON ib_journeys(train_id, departure_time);
