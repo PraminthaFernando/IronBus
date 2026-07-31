@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TABLE stations (
+CREATE TABLE ib_stations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code VARCHAR(20) NOT NULL,
     name VARCHAR(150) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE stations (
     CONSTRAINT ck_station_name_not_blank CHECK (btrim(name) <> '')
 );
 
-CREATE TABLE routes (
+CREATE TABLE ib_routes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code VARCHAR(30) NOT NULL,
     name VARCHAR(200) NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE routes (
     CONSTRAINT ck_route_name_not_blank CHECK (btrim(name) <> '')
 );
 
-CREATE TABLE route_stations (
+CREATE TABLE ib_route_stations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     route_id UUID NOT NULL REFERENCES routes(id),
     station_id UUID NOT NULL REFERENCES stations(id),
@@ -50,7 +50,7 @@ CREATE TABLE route_stations (
         CHECK (scheduled_offset_minutes >= 0)
 );
 
-CREATE TABLE trains (
+CREATE TABLE ib_trains (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code VARCHAR(30) NOT NULL,
     name VARCHAR(150) NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE trains (
     CONSTRAINT ck_train_name_not_blank CHECK (btrim(name) <> '')
 );
 
-CREATE TABLE coaches (
+CREATE TABLE ib_coaches (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     train_id UUID NOT NULL REFERENCES trains(id),
     coach_number VARCHAR(20) NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE coaches (
     )
 );
 
-CREATE TABLE seats (
+CREATE TABLE ib_seats (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     coach_id UUID NOT NULL REFERENCES coaches(id),
     seat_number VARCHAR(20) NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE seats (
        )
 );
 
-CREATE TABLE journeys (
+CREATE TABLE ib_journeys (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     train_id UUID NOT NULL REFERENCES trains(id),
     route_id UUID NOT NULL REFERENCES routes(id),
