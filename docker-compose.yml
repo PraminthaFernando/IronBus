@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: train-booking-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ironbus}
+      POSTGRES_USER: ${POSTGRES_USER:-ironbus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ironbus}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - train-booking-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-ironbus} -d ${POSTGRES_DB:-ironbus}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend/booking
+    container_name: train-booking-backend
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-ironbus}
+      DB_USERNAME: ${POSTGRES_USER:-ironbus}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-ironbus}
+      FRONTEND_ORIGIN: http://localhost:${FRONTEND_PORT:-3000}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://localhost:8080/actuator/health || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  train-booking-postgres-data:
