@@ -1,4 +1,4 @@
-package com.lsf.booking;
+package com.lsf.ironbus;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;

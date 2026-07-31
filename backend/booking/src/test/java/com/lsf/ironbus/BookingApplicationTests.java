@@ -1,4 +1,4 @@
-package com.lsf.booking;
+package com.lsf.ironbus;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

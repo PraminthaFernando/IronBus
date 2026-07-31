@@ -1,4 +1,4 @@
-package com.lsf.booking;
+package com.lsf.ironbus;
 
 import org.springframework.boot.SpringApplication;
 
