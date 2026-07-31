@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -42,7 +44,12 @@ public class RouteStation extends BaseEntity {
     @Column(name = "sequence_number", nullable = false)
     private int sequenceNumber;
 
-    @Column(name = "distance_from_origin_km", nullable = false, precision = 8, scale = 2)
+    @Column(
+            name = "distance_from_origin_km",
+            nullable = false,
+            precision = 8,
+            scale = 2
+    )
     private BigDecimal distanceFromOriginKm;
 
     @Column(name = "scheduled_offset_minutes", nullable = false)
@@ -50,4 +57,78 @@ public class RouteStation extends BaseEntity {
 
     @Column(nullable = false)
     private boolean active;
+
+    public RouteStation(
+            UUID id,
+            Route route,
+            Station station,
+            int sequenceNumber,
+            BigDecimal distanceFromOriginKm,
+            int scheduledOffsetMinutes,
+            Instant createdAt
+    ) {
+        super(createdAt);
+
+        this.id = Objects.requireNonNull(id, "Route station id is required");
+        this.route = Objects.requireNonNull(route, "Route is required");
+        this.station = Objects.requireNonNull(station, "Station is required");
+        this.sequenceNumber = validateSequence(sequenceNumber);
+        this.distanceFromOriginKm = validateDistance(distanceFromOriginKm);
+        this.scheduledOffsetMinutes = validateOffset(scheduledOffsetMinutes);
+        this.active = true;
+
+        validateFirstStation();
+    }
+
+    private void validateFirstStation() {
+        if (sequenceNumber == 0) {
+            if (distanceFromOriginKm.compareTo(BigDecimal.ZERO) != 0) {
+                throw new IllegalArgumentException(
+                        "The first station distance must be zero"
+                );
+            }
+
+            if (scheduledOffsetMinutes != 0) {
+                throw new IllegalArgumentException(
+                        "The first station scheduled offset must be zero"
+                );
+            }
+        }
+    }
+
+    private static int validateSequence(int sequenceNumber) {
+        if (sequenceNumber < 0) {
+            throw new IllegalArgumentException(
+                    "Route station sequence cannot be negative"
+            );
+        }
+
+        return sequenceNumber;
+    }
+
+    private static BigDecimal validateDistance(BigDecimal distance) {
+        if (distance == null) {
+            throw new IllegalArgumentException(
+                    "Distance from origin is required"
+            );
+        }
+
+        if (distance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException(
+                    "Distance from origin cannot be negative"
+            );
+        }
+
+        return distance.setScale(2);
+    }
+
+    private static int validateOffset(int offsetMinutes) {
+        if (offsetMinutes < 0) {
+            throw new IllegalArgumentException(
+                    "Scheduled offset cannot be negative"
+            );
+        }
+
+        return offsetMinutes;
+    }
 }
