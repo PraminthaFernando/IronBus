@@ -17,4 +17,6 @@ public interface RouteRepository
     Optional<Route> findByIdAndActiveTrue(UUID id);
 
     List<Route> findAllByActiveTrueOrderByNameAsc();
+
+    Optional<Route> findByCodeIgnoreCase(String code);
 }

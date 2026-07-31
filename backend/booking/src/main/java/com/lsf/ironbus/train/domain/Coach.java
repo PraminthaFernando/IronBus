@@ -8,6 +8,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +26,8 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Coach extends BaseEntity {
+
+    private static final int MAX_COACH_NUMBER_LENGTH = 20;
 
     @Id
     private UUID id;
@@ -44,4 +49,57 @@ public class Coach extends BaseEntity {
 
     @Column(nullable = false)
     private boolean active;
+
+    public Coach(
+            UUID id,
+            Train train,
+            String coachNumber,
+            TravelClass travelClass,
+            CoachReservationMode reservationMode,
+            Instant createdAt
+    ) {
+        super(createdAt);
+
+        this.id = Objects.requireNonNull(id, "Coach id is required");
+        this.train = Objects.requireNonNull(train, "Train is required");
+        this.coachNumber = normalizeCoachNumber(coachNumber);
+        this.travelClass = Objects.requireNonNull(
+                travelClass,
+                "Travel class is required"
+        );
+        this.reservationMode = Objects.requireNonNull(
+                reservationMode,
+                "Reservation mode is required"
+        );
+        this.active = true;
+    }
+
+    public boolean isReserved() {
+        return reservationMode == CoachReservationMode.RESERVED;
+    }
+
+    public void deactivate(Instant updatedAt) {
+        this.active = false;
+        markUpdated(updatedAt);
+    }
+
+    private static String normalizeCoachNumber(String coachNumber) {
+        if (coachNumber == null || coachNumber.isBlank()) {
+            throw new IllegalArgumentException("Coach number is required");
+        }
+
+        String normalized = coachNumber
+                .trim()
+                .toUpperCase(Locale.ROOT);
+
+        if (normalized.length() > MAX_COACH_NUMBER_LENGTH) {
+            throw new IllegalArgumentException(
+                    "Coach number cannot exceed "
+                            + MAX_COACH_NUMBER_LENGTH
+                            + " characters"
+            );
+        }
+
+        return normalized;
+    }
 }
