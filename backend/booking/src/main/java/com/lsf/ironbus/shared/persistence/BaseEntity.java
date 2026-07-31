@@ -2,15 +2,17 @@ package com.lsf.ironbus.shared.persistence;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Version;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Objects;
 
 @Getter
 @MappedSuperclass
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseEntity {
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -23,15 +25,17 @@ public abstract class BaseEntity {
     @Column(name = "version", nullable = false)
     private long version;
 
-    @PrePersist
-    protected void onCreate() {
-        Instant now = Instant.now();
-        this.createdAt = now;
-        this.updatedAt = now;
+    protected BaseEntity(Instant createdAt) {
+        Instant time = Objects.requireNonNull(createdAt, "createdAt is required");
+
+        this.createdAt = time;
+        this.updatedAt = time;
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = Instant.now();
+    protected void markUpdated(Instant updatedAt) {
+        this.updatedAt = Objects.requireNonNull(
+                updatedAt,
+                "updatedAt is required"
+        );
     }
 }
