@@ -1,6 +1,5 @@
-package com.lsf.ironbus.fare.configuration;
+package com.lsf.ironbus.fare.config;
 
-import com.lsf.ironbus.fare.config.FareProperties;
 import com.lsf.ironbus.train.enums.TravelClass;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
