@@ -32,6 +32,7 @@ public class AddStationToRouteService {
     private final UuidGenerator uuidGenerator;
     private final TimeProvider timeProvider;
 
+    @SuppressWarnings("null")
     @Transactional
     public RouteStationResponse add(
             AddStationToRouteCommand command

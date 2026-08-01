@@ -1,15 +1,43 @@
 package com.lsf.ironbus.support;
 
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.postgresql.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Testcontainers
 public abstract class PostgreSqlIntegrationTest {
 
-    @Container
-    @ServiceConnection
-    static final PostgreSQLContainer POSTGRES =
-            new PostgreSQLContainer("postgres:16-alpine");
+    protected static final PostgreSQLContainer POSTGRES;
+
+    static {
+        POSTGRES = new PostgreSQLContainer(
+                "postgres:16-alpine"
+        );
+
+        POSTGRES.start();
+    }
+
+    @DynamicPropertySource
+    static void configurePostgresSql(
+            DynamicPropertyRegistry registry
+    ) {
+        registry.add(
+                "spring.datasource.url",
+                POSTGRES::getJdbcUrl
+        );
+
+        registry.add(
+                "spring.datasource.username",
+                POSTGRES::getUsername
+        );
+
+        registry.add(
+                "spring.datasource.password",
+                POSTGRES::getPassword
+        );
+
+        registry.add(
+                "spring.datasource.driver-class-name",
+                POSTGRES::getDriverClassName
+        );
+    }
 }
