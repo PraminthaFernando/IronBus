@@ -1,4 +1,4 @@
-package com.lsf.ironbus.segment.application;
+package com.lsf.ironbus.segment.app;
 
 import com.lsf.ironbus.fare.domain.Fare;
 import com.lsf.ironbus.fare.domain.FarePolicy;
