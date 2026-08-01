@@ -15,7 +15,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
+import static com.lsf.ironbus.support.Phase2Fixtures.NOW;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(properties = {
         "spring.flyway.enabled=true",
@@ -82,5 +84,98 @@ class RouteStationRepositoryTest
                         )
                 )
         ).isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
+    void findsRouteStationByRouteAndStation() {
+        Route route = routeRepository.save(new Route(
+                UUID.randomUUID(),
+                "P2R-" + shortId(),
+                "Phase 2 Route",
+                NOW
+        ));
+        Station station = stationRepository.save(new Station(
+                UUID.randomUUID(),
+                "S" + shortId().substring(0, 5),
+                "Phase 2 Station",
+                NOW
+        ));
+        RouteStation routeStation = routeStationRepository.saveAndFlush(
+                new RouteStation(
+                        UUID.randomUUID(),
+                        route,
+                        station,
+                        0,
+                        BigDecimal.ZERO,
+                        0,
+                        NOW
+                )
+        );
+
+        var found = routeStationRepository
+                .findByRouteIdAndStationIdAndActiveTrue(
+                        route.getId(),
+                        station.getId()
+                );
+
+        assertThat(found).isPresent();
+        assertThat(found.orElseThrow().getId()).isEqualTo(routeStation.getId());
+    }
+
+    @Test
+    void preservesSequenceOrderAndDistancePrecision() {
+        Route route = routeRepository.save(new Route(
+                UUID.randomUUID(),
+                "P2R-" + shortId(),
+                "Ordered Route",
+                NOW
+        ));
+        Station first = stationRepository.save(new Station(
+                UUID.randomUUID(),
+                "A" + shortId().substring(0, 5),
+                "First",
+                NOW
+        ));
+        Station second = stationRepository.save(new Station(
+                UUID.randomUUID(),
+                "B" + shortId().substring(0, 5),
+                "Second",
+                NOW
+        ));
+
+        routeStationRepository.save(new RouteStation(
+                UUID.randomUUID(),
+                route,
+                second,
+                1,
+                new BigDecimal("27.35"),
+                35,
+                NOW
+        ));
+        routeStationRepository.save(new RouteStation(
+                UUID.randomUUID(),
+                route,
+                first,
+                0,
+                BigDecimal.ZERO,
+                0,
+                NOW
+        ));
+        routeStationRepository.flush();
+
+        var results = routeStationRepository
+                .findAllByRouteIdAndActiveTrueOrderBySequenceNumberAsc(
+                        route.getId()
+                );
+
+        assertThat(results)
+                .extracting(RouteStation::getSequenceNumber)
+                .containsExactly(0, 1);
+        assertThat(results.get(1).getDistanceFromOriginKm())
+                .isEqualByComparingTo("27.35");
+    }
+
+    private static String shortId() {
+        return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
     }
 }
