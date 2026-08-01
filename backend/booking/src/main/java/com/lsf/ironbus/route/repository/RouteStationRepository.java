@@ -29,4 +29,10 @@ public interface RouteStationRepository
     findFirstByRouteIdAndActiveTrueOrderBySequenceNumberDesc(UUID routeId);
 
     long countByRouteIdAndActiveTrue(UUID routeId);
+
+    Optional<RouteStation>
+    findByRouteIdAndStationIdAndActiveTrue(
+            UUID routeId,
+            UUID stationId
+    );
 }

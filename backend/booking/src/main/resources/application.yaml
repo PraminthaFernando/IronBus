@@ -26,6 +26,16 @@ app:
   cors:
     allowed-origin: ${FRONTEND_ORIGIN:http://localhost:3000}
 
+  fare:
+    currency: LKR
+    base-fare: 100.00
+    price-per-km: 8.00
+    minimum-fare: 150.00
+    class-multipliers:
+      FIRST_CLASS: 1.75
+      SECOND_CLASS: 1.25
+      THIRD_CLASS: 1.00
+
 server:
   port: ${SERVER_PORT:8080}
   shutdown: graceful

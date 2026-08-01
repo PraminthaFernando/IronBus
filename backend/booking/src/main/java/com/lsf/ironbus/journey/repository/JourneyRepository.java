@@ -3,6 +3,7 @@ package com.lsf.ironbus.journey.repository;
 import com.lsf.ironbus.journey.domain.Journey;
 import com.lsf.ironbus.journey.enums.JourneyStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
 import java.util.List;
@@ -28,4 +29,13 @@ public interface JourneyRepository
             Instant end,
             JourneyStatus status
     );
+
+    @Query("""
+    select j
+    from Journey j
+    join fetch j.route r
+    join fetch j.train t
+    where j.id = :journeyId
+    """)
+    Optional<Journey> findDetailedById(UUID journeyId);
 }
