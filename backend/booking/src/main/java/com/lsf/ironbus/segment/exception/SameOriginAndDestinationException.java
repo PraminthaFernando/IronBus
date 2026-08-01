@@ -1,0 +1,14 @@
+package com.lsf.ironbus.segment.exception;
+
+import com.lsf.ironbus.shared.error.DomainException;
+
+public class SameOriginAndDestinationException
+        extends DomainException {
+
+    public SameOriginAndDestinationException() {
+        super(
+                "SAME_ORIGIN_AND_DESTINATION",
+                "Origin and destination must be different stations"
+        );
+    }
+}
