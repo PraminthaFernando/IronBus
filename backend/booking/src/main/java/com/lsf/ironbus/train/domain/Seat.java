@@ -7,6 +7,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -22,6 +25,8 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Seat extends BaseEntity {
+
+    private static final int MAX_SEAT_NUMBER_LENGTH = 20;
 
     @Id
     private UUID id;
@@ -45,4 +50,78 @@ public class Seat extends BaseEntity {
 
     @Column(nullable = false)
     private boolean active;
+
+    public Seat(
+            UUID id,
+            Coach coach,
+            String seatNumber,
+            SeatType seatType,
+            Integer rowNumber,
+            Integer columnNumber,
+            Instant createdAt
+    ) {
+        super(createdAt);
+
+        this.id = Objects.requireNonNull(id, "Seat id is required");
+        this.coach = Objects.requireNonNull(coach, "Coach is required");
+
+        if (!coach.isReserved()) {
+            throw new IllegalArgumentException(
+                    "Individual seats can only be added to reserved coaches"
+            );
+        }
+
+        this.seatNumber = normalizeSeatNumber(seatNumber);
+        this.seatType = Objects.requireNonNull(
+                seatType,
+                "Seat type is required"
+        );
+        this.rowNumber = validatePositiveNullable(
+                rowNumber,
+                "Row number"
+        );
+        this.columnNumber = validatePositiveNullable(
+                columnNumber,
+                "Column number"
+        );
+        this.active = true;
+    }
+
+    public void deactivate(Instant updatedAt) {
+        this.active = false;
+        markUpdated(updatedAt);
+    }
+
+    private static String normalizeSeatNumber(String seatNumber) {
+        if (seatNumber == null || seatNumber.isBlank()) {
+            throw new IllegalArgumentException("Seat number is required");
+        }
+
+        String normalized = seatNumber
+                .trim()
+                .toUpperCase(Locale.ROOT);
+
+        if (normalized.length() > MAX_SEAT_NUMBER_LENGTH) {
+            throw new IllegalArgumentException(
+                    "Seat number cannot exceed "
+                            + MAX_SEAT_NUMBER_LENGTH
+                            + " characters"
+            );
+        }
+
+        return normalized;
+    }
+
+    private static Integer validatePositiveNullable(
+            Integer value,
+            String fieldName
+    ) {
+        if (value != null && value <= 0) {
+            throw new IllegalArgumentException(
+                    fieldName + " must be positive"
+            );
+        }
+
+        return value;
+    }
 }

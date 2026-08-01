@@ -27,4 +27,6 @@ public interface RouteStationRepository
 
     Optional<RouteStation>
     findFirstByRouteIdAndActiveTrueOrderBySequenceNumberDesc(UUID routeId);
+
+    long countByRouteIdAndActiveTrue(UUID routeId);
 }

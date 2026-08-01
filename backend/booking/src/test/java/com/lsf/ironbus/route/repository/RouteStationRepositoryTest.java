@@ -17,7 +17,10 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
+@DataJpaTest(properties = {
+        "spring.flyway.enabled=true",
+        "spring.jpa.hibernate.ddl-auto=validate"
+})
 @ActiveProfiles("test")
 class RouteStationRepositoryTest
         extends PostgreSqlIntegrationTest {

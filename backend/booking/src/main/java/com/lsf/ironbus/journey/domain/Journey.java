@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -43,4 +44,66 @@ public class Journey extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private JourneyStatus status;
+
+    public Journey(
+            UUID id,
+            Train train,
+            Route route,
+            Instant departureTime,
+            Instant createdAt
+    ) {
+        super(createdAt);
+
+        this.id = Objects.requireNonNull(id, "Journey id is required");
+        this.train = Objects.requireNonNull(train, "Train is required");
+        this.route = Objects.requireNonNull(route, "Route is required");
+        this.departureTime = Objects.requireNonNull(
+                departureTime,
+                "Departure time is required"
+        );
+        this.status = JourneyStatus.SCHEDULED;
+    }
+
+    public boolean isBookable() {
+        return status == JourneyStatus.SCHEDULED
+                || status == JourneyStatus.BOARDING;
+    }
+
+    public void cancel(Instant updatedAt) {
+        if (status == JourneyStatus.COMPLETED) {
+            throw new IllegalStateException(
+                    "A completed journey cannot be cancelled"
+            );
+        }
+
+        status = JourneyStatus.CANCELLED;
+        markUpdated(updatedAt);
+    }
+
+    public void markBoarding(Instant updatedAt) {
+        requireStatus(JourneyStatus.SCHEDULED);
+        status = JourneyStatus.BOARDING;
+        markUpdated(updatedAt);
+    }
+
+    public void markDeparted(Instant updatedAt) {
+        requireStatus(JourneyStatus.BOARDING);
+        status = JourneyStatus.DEPARTED;
+        markUpdated(updatedAt);
+    }
+
+    public void markCompleted(Instant updatedAt) {
+        requireStatus(JourneyStatus.DEPARTED);
+        status = JourneyStatus.COMPLETED;
+        markUpdated(updatedAt);
+    }
+
+    private void requireStatus(JourneyStatus expected) {
+        if (status != expected) {
+            throw new IllegalStateException(
+                    "Journey must be " + expected
+                            + " but is currently " + status
+            );
+        }
+    }
 }
