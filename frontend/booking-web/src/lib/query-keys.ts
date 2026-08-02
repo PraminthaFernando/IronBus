@@ -21,4 +21,16 @@ export const queryKeys = {
     ] as const,
 
   booking: (reference: string) => ["booking", reference] as const,
+
+  bookingsByEmail: (
+    email: string,
+    page: number,
+    size: number,
+  ) =>
+    [
+      "bookings-by-email",
+      email,
+      page,
+      size,
+    ] as const,
 };

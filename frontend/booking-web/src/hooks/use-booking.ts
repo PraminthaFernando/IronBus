@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "../lib/query-keys";
-import { cancelBooking, createBooking, getBooking, type CreateBookingRequest } from "../api/bookings-api";
+import { cancelBooking, createBooking, getBooking, searchBookingsByEmail, type CreateBookingRequest } from "../api/bookings-api";
 
 export function useBooking(r?: string) {
 
@@ -29,5 +29,31 @@ export function useCancelBooking(r: string) {
   return useMutation({
     mutationFn: () => cancelBooking(r),
     onSuccess: (b) => qc.setQueryData(queryKeys.booking(r), b),
+  });
+}
+
+export function useBookingsByEmail(
+  email: string | undefined,
+  page = 0,
+  size = 10,
+) {
+  return useQuery({
+    queryKey: email
+      ? queryKeys.bookingsByEmail(
+          email,
+          page,
+          size,
+        )
+      : ["bookings-by-email", "disabled"],
+
+    queryFn: () =>
+      searchBookingsByEmail({
+        passengerEmail: email!,
+        page,
+        size,
+      }),
+
+    enabled: Boolean(email),
+    retry: false,
   });
 }

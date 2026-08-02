@@ -97,3 +97,29 @@ export interface BookingResponse {
   currency: string;
   createdAt: string;
 }
+
+export interface BookingSearchItem {
+  id: string;
+  reference: string;
+  status: BookingStatus;
+  journeyId: string;
+  departureTime: string;
+  originCode: string;
+  originName: string;
+  destinationCode: string;
+  destinationName: string;
+  coachNumber: string;
+  seatNumber: string;
+  travelClass: TravelClass;
+  fareAmount: number;
+  currency: string;
+  createdAt: string;
+}
+
+export interface BookingSearchResponse {
+  items: BookingSearchItem[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
