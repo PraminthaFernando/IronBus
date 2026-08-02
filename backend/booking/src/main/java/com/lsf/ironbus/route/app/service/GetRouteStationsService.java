@@ -1,5 +1,6 @@
 package com.lsf.ironbus.route.app.service;
 
+import com.lsf.ironbus.route.app.response.RouteResponse;
 import com.lsf.ironbus.route.app.response.RouteStationResponse;
 import com.lsf.ironbus.route.app.response.RouteWithStationsResponse;
 import com.lsf.ironbus.route.domain.Route;
@@ -44,5 +45,14 @@ public class GetRouteStationsService {
                 route.getName(),
                 stations
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<RouteResponse> getAllActiveRoutes() {
+        return routeRepository
+                .findAllByActiveTrueOrderByNameAsc()
+                .stream()
+                .map(RouteResponse::from)
+                .toList();
     }
 }
