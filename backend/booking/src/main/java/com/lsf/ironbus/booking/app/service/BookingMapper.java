@@ -1,6 +1,7 @@
 package com.lsf.ironbus.booking.app.service;
 
 import com.lsf.ironbus.booking.app.response.BookingResponse;
+import com.lsf.ironbus.booking.app.response.BookingSearchItemResponse;
 import com.lsf.ironbus.booking.domain.Booking;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,40 @@ public class BookingMapper {
                 booking.getDestinationRouteStation()
                         .getStation()
                         .getName(),
+                booking.getFareAmount(),
+                booking.getCurrency(),
+                booking.getCreatedAt()
+        );
+    }
+
+    public BookingSearchItemResponse toSearchItem(
+            Booking booking
+    ) {
+        return new BookingSearchItemResponse(
+                booking.getId(),
+                booking.getReference(),
+                booking.getStatus(),
+                booking.getJourney().getId(),
+                booking.getJourney().getDepartureTime(),
+                booking.getOriginRouteStation()
+                        .getStation()
+                        .getCode(),
+                booking.getOriginRouteStation()
+                        .getStation()
+                        .getName(),
+                booking.getDestinationRouteStation()
+                        .getStation()
+                        .getCode(),
+                booking.getDestinationRouteStation()
+                        .getStation()
+                        .getName(),
+                booking.getSeat()
+                        .getCoach()
+                        .getCoachNumber(),
+                booking.getSeat().getSeatNumber(),
+                booking.getSeat()
+                        .getCoach()
+                        .getTravelClass(),
                 booking.getFareAmount(),
                 booking.getCurrency(),
                 booking.getCreatedAt()

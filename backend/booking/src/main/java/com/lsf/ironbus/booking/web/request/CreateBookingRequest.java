@@ -1,6 +1,5 @@
 package com.lsf.ironbus.booking.web.request;
 
-import com.lsf.ironbus.booking.web.PassengerRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 

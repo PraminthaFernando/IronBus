@@ -2,10 +2,12 @@ package com.lsf.ironbus.booking.web.controller;
 
 import com.lsf.ironbus.booking.app.command.CreateBookingCommand;
 import com.lsf.ironbus.booking.app.response.BookingResponse;
+import com.lsf.ironbus.booking.app.response.BookingSearchResponse;
 import com.lsf.ironbus.booking.app.service.CancelBookingService;
 import com.lsf.ironbus.booking.app.service.CreateBookingService;
 import com.lsf.ironbus.booking.app.service.GetBookingService;
 import com.lsf.ironbus.booking.web.request.CreateBookingRequest;
+import com.lsf.ironbus.booking.web.request.SearchBookingsRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -57,5 +59,25 @@ public class BookingController {
             @PathVariable String reference
     ) {
         return cancelBookingService.cancel(reference);
+    }
+
+    @PostMapping("/search")
+    public BookingSearchResponse search(
+            @Valid
+            @RequestBody
+            SearchBookingsRequest request,
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int size
+    ) {
+        return getBookingService
+                .searchByPassengerEmail(
+                        request.passengerEmail(),
+                        page,
+                        size
+                );
     }
 }

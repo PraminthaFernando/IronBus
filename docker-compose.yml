@@ -46,5 +46,18 @@ services:
       retries: 10
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ./frontend/booking-web
+      args:
+        VITE_API_BASE_URL: http://localhost:${BACKEND_PORT:-8080}/api/v1
+    container_name: train-booking-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   train-booking-postgres-data:

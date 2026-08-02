@@ -1,4 +1,4 @@
-package com.lsf.ironbus.booking.web;
+package com.lsf.ironbus.booking.web.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

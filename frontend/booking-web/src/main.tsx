@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-query';
 
 import App from './App';
-import './index.css';
+import './style.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {
