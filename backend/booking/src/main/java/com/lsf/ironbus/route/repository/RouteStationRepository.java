@@ -35,4 +35,10 @@ public interface RouteStationRepository
             UUID routeId,
             UUID stationId
     );
+
+    Optional<RouteStation>
+    findByStationIdAndActiveTrue(UUID stationId);
+
+    Optional<RouteStation>
+    findByIdAndActiveTrue(UUID id);
 }

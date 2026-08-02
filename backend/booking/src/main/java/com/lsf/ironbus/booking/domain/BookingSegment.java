@@ -53,17 +53,16 @@ public class BookingSegment {
             Seat seat,
             int segmentSequence
     ) {
-        this.id = Objects.requireNonNull(id);
-        this.booking = Objects.requireNonNull(booking);
-        this.journey = Objects.requireNonNull(journey);
-        this.seat = Objects.requireNonNull(seat);
-
         if (segmentSequence < 0) {
             throw new IllegalArgumentException(
                     "Segment sequence cannot be negative"
             );
         }
 
+        this.id = Objects.requireNonNull(id);
+        this.booking = Objects.requireNonNull(booking);
+        this.journey = Objects.requireNonNull(journey);
+        this.seat = Objects.requireNonNull(seat);
         this.segmentSequence = segmentSequence;
     }
 }

@@ -23,10 +23,10 @@ public interface SeatAvailabilityRepository
                     s.seat_type AS seatType,
                     s.row_number AS rowNumber,
                     s.column_number AS columnNumber
-                FROM seats s
-                JOIN coaches c
+                FROM ib_seats s
+                JOIN ib_coaches c
                   ON c.id = s.coach_id
-                JOIN journeys j
+                JOIN ib_journeys j
                   ON j.train_id = c.train_id
                 WHERE j.id = :journeyId
                   AND j.status = 'SCHEDULED'
@@ -35,7 +35,7 @@ public interface SeatAvailabilityRepository
                   AND c.reservation_mode = 'RESERVED'
                   AND NOT EXISTS (
                       SELECT 1
-                      FROM booking_segments bs
+                      FROM ib_booking_segments bs
                       WHERE bs.journey_id = :journeyId
                         AND bs.seat_id = s.id
                         AND bs.segment_sequence >= :originSequence

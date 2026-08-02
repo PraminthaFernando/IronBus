@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SeatRepository
@@ -33,4 +34,15 @@ public interface SeatRepository
     order by c.coachNumber, s.seatNumber
     """)
     List<Seat> findActiveSeatsByTrainId(UUID trainId);
+
+    @Query("""
+    select s
+    from Seat s
+    join fetch s.coach c
+    join fetch c.train t
+    where s.id = :seatId
+      and s.active = true
+      and c.active = true
+    """)
+    Optional<Seat> findDetailedActiveById(UUID seatId);
 }
