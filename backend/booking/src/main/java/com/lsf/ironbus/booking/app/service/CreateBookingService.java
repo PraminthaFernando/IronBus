@@ -79,7 +79,7 @@ public class CreateBookingService {
         validateSeat(journey, seat);
 
         RouteStation origin = routeStationRepository
-                .findByStationIdAndActiveTrue(
+                .findByIdAndActiveTrue(
                         leg.originRouteStationId()
                 )
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -88,7 +88,7 @@ public class CreateBookingService {
                 ));
 
         RouteStation destination = routeStationRepository
-                .findByStationIdAndActiveTrue(
+                .findByIdAndActiveTrue(
                         leg.destinationRouteStationId()
                 )
                 .orElseThrow(() -> new ResourceNotFoundException(
