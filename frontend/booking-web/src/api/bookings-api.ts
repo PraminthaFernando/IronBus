@@ -18,19 +18,19 @@ export interface SearchBookingsRequest {
 export async function createBooking(
   r: CreateBookingRequest,
 ): Promise<BookingResponse> {
-  return (await apiClient.post<BookingResponse>("/bookings", r)).data;
+  return (await apiClient.post<BookingResponse>("/v1/bookings", r)).data;
 }
 
 export async function getBooking(ref: string): Promise<BookingResponse> {
   return (
-    await apiClient.get<BookingResponse>(`/bookings/${encodeURIComponent(ref)}`)
+    await apiClient.get<BookingResponse>(`/v1/bookings/${encodeURIComponent(ref)}`)
   ).data;
 }
 
 export async function cancelBooking(ref: string): Promise<BookingResponse> {
   return (
     await apiClient.post<BookingResponse>(
-      `/bookings/${encodeURIComponent(ref)}/cancel`,
+      `/v1/bookings/${encodeURIComponent(ref)}/cancel`,
     )
   ).data;
 }
@@ -42,7 +42,7 @@ export async function searchBookingsByEmail({
 }: SearchBookingsRequest): Promise<BookingSearchResponse> {
   const response =
     await apiClient.post<BookingSearchResponse>(
-      "/bookings/search",
+      "/v1/bookings/search",
       {
         passengerEmail,
       },
