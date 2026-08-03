@@ -1,6 +1,7 @@
 package com.lsf.ironbus.train.exception;
 
 import com.lsf.ironbus.shared.error.DomainException;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -13,7 +14,8 @@ public class SeatNumberAlreadyExistsException extends DomainException {
         super(
                 "SEAT_NUMBER_ALREADY_EXISTS",
                 "Seat number '%s' already exists for coach %s"
-                        .formatted(seatNumber, coachId)
+                        .formatted(seatNumber, coachId),
+                HttpStatus.CONFLICT
         );
     }
 }

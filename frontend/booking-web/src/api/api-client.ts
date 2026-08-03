@@ -1,7 +1,25 @@
 import axios from "axios";
+import { environment } from "../config/environment";
+import { normalizeApiError } from "./api-error";
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080/api/v1",
-  timeout: 15000,
-  headers: { "Content-Type": "application/json" },
+  baseURL: environment.apiBaseUrl,
+  timeout: 15_000,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
 });
+
+apiClient.interceptors.request.use((config) => {
+  const traceId = crypto.randomUUID();
+
+  config.headers.set("X-Trace-Id", traceId);
+
+  return config;
+});
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error: unknown) => Promise.reject(normalizeApiError(error)),
+);

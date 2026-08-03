@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/ironbus}
+    username: ${DATABASE_USERNAME:ironbus}
+    password: ${DATABASE_PASSWORD:ironbus}
+
+  jpa:
+    show-sql: false
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
+logging:
+  level:
+    com.lsf.ironbus: DEBUG

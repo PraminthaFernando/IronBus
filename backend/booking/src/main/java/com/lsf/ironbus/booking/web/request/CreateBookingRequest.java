@@ -7,19 +7,19 @@ import java.util.UUID;
 
 public record CreateBookingRequest(
 
-        @NotNull
+        @NotNull(message = "Journey ID is required")
         UUID journeyId,
 
-        @NotNull
+        @NotNull(message = "Seat ID is required")
         UUID seatId,
 
-        @NotNull
+        @NotNull(message = "Origin station ID is required")
         UUID originStationId,
 
-        @NotNull
+        @NotNull(message = "Destination station ID is required")
         UUID destinationStationId,
 
-        @NotNull
+        @NotNull(message = "Passenger details are required")
         @Valid
         PassengerRequest passenger
 ) {

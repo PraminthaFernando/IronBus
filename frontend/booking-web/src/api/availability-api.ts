@@ -11,7 +11,7 @@ export async function findAvailableSeats(
 ): Promise<AvailabilityResponse> {
   return (
     await apiClient.get<AvailabilityResponse>(
-      `/journeys/${p.journeyId}/available-seats`,
+      `/v1/journeys/${p.journeyId}/available-seats`,
       {
         params: {
           originStationId: p.originStationId,

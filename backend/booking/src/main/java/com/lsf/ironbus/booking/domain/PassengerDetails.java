@@ -1,6 +1,7 @@
 package com.lsf.ironbus.booking.domain;
 
 import java.util.Locale;
+import java.util.Objects;
 
 public record PassengerDetails(
         String name,
@@ -9,36 +10,33 @@ public record PassengerDetails(
 ) {
 
     public PassengerDetails {
-        name = requireText(name, "Passenger name");
-        email = normalizeEmail(email);
-        phone = requireText(phone, "Passenger phone");
+        name = normalizeRequired(name, "name");
+        email = normalizeRequired(email, "email")
+                .toLowerCase(Locale.ROOT);
+        phone = normalizeRequired(phone, "phone")
+                .replace(" ", "")
+                .replace("-", "");
     }
 
-    private static String normalizeEmail(String value) {
-        String normalized = requireText(
+    private static String normalizeRequired(
+            String value,
+            String fieldName
+    ) {
+        Objects.requireNonNull(
                 value,
-                "Passenger email"
-        ).toLowerCase(Locale.ROOT);
+                fieldName + " must not be null"
+        );
 
-        if (normalized.length() > 254) {
+        String normalized = value
+                .trim()
+                .replaceAll("\\s+", " ");
+
+        if (normalized.isBlank()) {
             throw new IllegalArgumentException(
-                    "Passenger email cannot exceed 254 characters"
+                    fieldName + " must not be blank"
             );
         }
 
         return normalized;
-    }
-
-    private static String requireText(
-            String value,
-            String fieldName
-    ) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(
-                    fieldName + " is required"
-            );
-        }
-
-        return value.trim();
     }
 }

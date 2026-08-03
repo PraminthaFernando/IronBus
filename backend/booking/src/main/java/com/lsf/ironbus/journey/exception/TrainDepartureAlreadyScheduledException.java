@@ -1,6 +1,7 @@
 package com.lsf.ironbus.journey.exception;
 
 import com.lsf.ironbus.shared.error.DomainException;
+import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -15,7 +16,8 @@ public class TrainDepartureAlreadyScheduledException
         super(
                 "TRAIN_DEPARTURE_ALREADY_SCHEDULED",
                 "Train %s already has a journey scheduled at %s"
-                        .formatted(trainId, departureTime)
+                        .formatted(trainId, departureTime),
+                HttpStatus.CONFLICT
         );
     }
 }

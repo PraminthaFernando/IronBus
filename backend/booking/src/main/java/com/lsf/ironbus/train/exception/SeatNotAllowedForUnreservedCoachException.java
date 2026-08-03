@@ -1,6 +1,7 @@
 package com.lsf.ironbus.train.exception;
 
 import com.lsf.ironbus.shared.error.DomainException;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -11,7 +12,8 @@ public class SeatNotAllowedForUnreservedCoachException
         super(
                 "SEAT_NOT_ALLOWED_FOR_UNRESERVED_COACH",
                 "Individual seats cannot be added to unreserved coach: "
-                        + coachId
+                        + coachId,
+                HttpStatus.UNAUTHORIZED
         );
     }
 }

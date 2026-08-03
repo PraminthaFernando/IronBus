@@ -1,6 +1,7 @@
 package com.lsf.ironbus.route.exception;
 
 import com.lsf.ironbus.shared.error.DomainException;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -14,7 +15,8 @@ public class RouteSequenceAlreadyUsedException
         super(
                 "ROUTE_SEQUENCE_ALREADY_USED",
                 "Sequence " + sequenceNumber
-                        + " is already used by route " + routeId
+                        + " is already used by route " + routeId,
+                HttpStatus.CONFLICT
         );
     }
 }

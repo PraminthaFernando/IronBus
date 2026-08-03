@@ -1,15 +1,20 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: train-booking-postgres
+    container_name: ironbus-postgres
+    restart: unless-stopped
+
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-ironbus}
       POSTGRES_USER: ${POSTGRES_USER:-ironbus}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ironbus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ironbus_local_password}
+
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
+
     volumes:
-      - train-booking-postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+
     healthcheck:
       test:
         [
@@ -19,45 +24,74 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    restart: unless-stopped
+      start_period: 5s
 
   backend:
     build:
       context: ./backend/booking
-    container_name: train-booking-backend
+      dockerfile: Dockerfile
+
+    container_name: ironbus-backend
+    restart: unless-stopped
+
     environment:
-      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-ironbus}
-      DB_USERNAME: ${POSTGRES_USER:-ironbus}
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-ironbus}
-      FRONTEND_ORIGIN: http://localhost:${FRONTEND_PORT:-3000}
+      SPRING_PROFILES_ACTIVE: dev
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-ironbus}
+      DATABASE_USERNAME: ${POSTGRES_USER:-ironbus}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-ironbus}
+
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8080}
+      APP_VERSION: ${APP_VERSION:-dev}
+
+      SWAGGER_UI_ENABLED: ${SWAGGER_UI_ENABLED:-true}
+      OPENAPI_DOCS_ENABLED: ${OPENAPI_DOCS_ENABLED:-true}
+
     ports:
       - "${BACKEND_PORT:-8080}:8080"
+
     depends_on:
       postgres:
         condition: service_healthy
+
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "wget -qO- http://localhost:8080/actuator/health || exit 1"
+          "wget -qO- http://localhost:8080/actuator/health/readiness | grep -q '\"status\":\"UP\"'"
         ]
       interval: 10s
       timeout: 5s
-      retries: 10
-    restart: unless-stopped
+      retries: 12
+      start_period: 30s
 
   frontend:
     build:
       context: ./frontend/booking-web
+      dockerfile: Dockerfile
       args:
-        VITE_API_BASE_URL: http://localhost:${BACKEND_PORT:-8080}/api/v1
-    container_name: train-booking-frontend
+        VITE_API_BASE_URL: /api
+
+    container_name: ironbus-frontend
+    restart: unless-stopped
+
     ports:
       - "${FRONTEND_PORT:-3000}:80"
+
     depends_on:
       backend:
         condition: service_healthy
-    restart: unless-stopped
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
-  train-booking-postgres-data:
+  postgres_data:

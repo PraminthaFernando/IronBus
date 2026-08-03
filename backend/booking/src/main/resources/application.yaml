@@ -43,9 +43,83 @@ server:
 management:
   endpoints:
     web:
+      base-path: /actuator
       exposure:
-        include: health,info
+        include:
+          - health
+          - info
+
   endpoint:
     health:
       probes:
         enabled: true
+      group:
+        liveness:
+          include:
+            - livenessState
+        readiness:
+          include:
+            - readinessState
+            - db
+            - diskSpace
+
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+  info:
+    env:
+      enabled: true
+
+ironbus:
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+
+  booking:
+    reference-prefix: ${BOOKING_REFERENCE_PREFIX:IB}
+    cancellation-cutoff: ${BOOKING_CANCELLATION_CUTOFF:PT1H}
+
+  cors:
+    allowed-origins:
+      - ${FRONTEND_URL:http://localhost:3000}
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+    allowed-headers:
+      - Authorization
+      - Content-Type
+      - Accept
+      - X-Trace-Id
+      - Idempotency-Key
+    exposed-headers:
+      - Location
+      - X-Trace-Id
+    allow-credentials: false
+    max-age-seconds: 3600
+
+  openapi:
+    title: IronBus Booking API
+    description: Segment-based railway seat booking API
+    version: ${APP_VERSION:1.0.0}
+    server-url: ${PUBLIC_API_URL:http://localhost:8080}
+
+logging:
+  pattern:
+    console: >-
+      %d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}
+      %-5level
+      traceId=%X{traceId:-none}
+      [%thread]
+      %logger{36}
+      - %msg%n
+
+  level:
+    root: INFO
+    com.lsf.ironbus: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.orm.jdbc.bind: WARN

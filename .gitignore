@@ -5,3 +5,14 @@ frontend/dist/
 .idea/
 .vscode/
 *.log
+
+.env.*
+!.env.example
+
+target/
+*.iml
+
+node_modules/
+dist/
+
+postgres-data/
