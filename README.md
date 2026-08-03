@@ -1,4 +1,4 @@
-# IronBus — Segment-Based Train Seat Booking System
+# IronBus - Segment-Based Train Seat Booking System
 
 IronBus is a production-oriented full-stack booking application for Sri Lanka’s Colombo Fort–Badulla railway line.
 
@@ -41,7 +41,6 @@ The implementation focuses on the central engineering problem: **guaranteeing co
 - [Challenges Encountered](#challenges-encountered)
 - [Known Limitations](#known-limitations)
 - [Future Improvements](#future-improvements)
-- [Screenshots](#screenshots)
 - [Fresh-Machine Verification](#fresh-machine-verification)
 - [AI Assistance Disclosure](#ai-assistance-disclosure)
 
@@ -217,8 +216,6 @@ ironbus/
 ├── .gitignore
 └── README.md
 ```
-
-> Adjust the directory names if the final repository uses `docker-compose.yml` instead of `compose.yml`, or a different frontend directory.
 
 ---
 
@@ -1416,34 +1413,6 @@ The central challenge was solved through transactional segment claims and databa
 - Email and SMS notifications
 - Rate limiting
 - Audit logging
-
----
-
-## Screenshots
-
-Store screenshots under `docs/images/`:
-
-```text
-journey-search.png
-seat-selection.png
-passenger-details.png
-booking-confirmation.png
-manage-booking.png
-booking-conflict.png
-swagger-api.png
-github-actions-success.png
-```
-
-Example:
-
-```markdown
-![Journey search](docs/images/journey-search.png)
-![Seat selection](docs/images/seat-selection.png)
-![Booking confirmation](docs/images/booking-confirmation.png)
-![Booking conflict recovery](docs/images/booking-conflict.png)
-```
-
-Use only fictional passenger data.
 
 ---
 
