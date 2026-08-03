@@ -41,4 +41,6 @@ public interface RouteStationRepository
 
     Optional<RouteStation>
     findByIdAndActiveTrue(UUID id);
+
+    void deleteByRouteId(UUID routeId);
 }

@@ -19,4 +19,6 @@ public interface RouteRepository
     List<Route> findAllByActiveTrueOrderByNameAsc();
 
     Optional<Route> findByCodeIgnoreCase(String code);
+
+    long countByActiveTrue();
 }
