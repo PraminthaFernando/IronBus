@@ -1,5 +1,6 @@
 package com.lsf.ironbus.config;
 
+import com.lsf.ironbus.support.PostgreSqlIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ActuatorHealthIntegrationTest {
+class ActuatorHealthIntegrationTest extends PostgreSqlIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
