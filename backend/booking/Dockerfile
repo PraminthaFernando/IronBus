@@ -1,27 +1,31 @@
 FROM eclipse-temurin:21-jdk-alpine AS build
 
-WORKDIR /app
+WORKDIR /workspace
 
-COPY .mvn/ .mvn
+COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
 
 RUN chmod +x mvnw
-RUN ./mvnw dependency:go-offline
+RUN ./mvnw -B -ntp dependency:go-offline
 
-COPY src ./src
+COPY src/ src/
 
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw -B -ntp clean package -DskipTests
 
-FROM eclipse-temurin:21-jre-alpine
+
+FROM eclipse-temurin:21-jre-alpine AS runtime
+
+RUN addgroup -S ironbus \
+    && adduser -S ironbus -G ironbus
 
 WORKDIR /app
 
-RUN addgroup -S spring && adduser -S spring -G spring
+COPY --from=build \
+    /workspace/target/*.jar \
+    /app/application.jar
 
-COPY --from=build /app/target/*.jar app.jar
-
-USER spring:spring
+USER ironbus
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-XX:+ExitOnOutOfMemoryError", "-Djava.security.egd=file:/dev/urandom", "-jar", "/app/application.jar"]

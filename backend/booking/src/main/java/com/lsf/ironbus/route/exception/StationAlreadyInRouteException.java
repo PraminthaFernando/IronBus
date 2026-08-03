@@ -1,6 +1,7 @@
 package com.lsf.ironbus.route.exception;
 
 import com.lsf.ironbus.shared.error.DomainException;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -14,7 +15,8 @@ public class StationAlreadyInRouteException
         super(
                 "STATION_ALREADY_IN_ROUTE",
                 "Station " + stationId
-                        + " is already assigned to route " + routeId
+                        + " is already assigned to route " + routeId,
+                HttpStatus.CONFLICT
         );
     }
 }

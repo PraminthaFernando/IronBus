@@ -1,5 +1,7 @@
 package com.lsf.ironbus.shared.error;
 
+import org.springframework.http.HttpStatus;
+
 public class ResourceNotFoundException extends DomainException {
 
     public ResourceNotFoundException(
@@ -8,7 +10,8 @@ public class ResourceNotFoundException extends DomainException {
     ) {
         super(
                 resourceName.toUpperCase() + "_NOT_FOUND",
-                resourceName + " was not found: " + identifier
+                resourceName + " was not found: " + identifier,
+                HttpStatus.NOT_FOUND
         );
     }
 }

@@ -24,7 +24,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(BookingController.class)
+@WebMvcTest(
+    controllers = BookingController.class,
+    properties = {
+        "ironbus.cors.allowed-origins[0]=http://localhost:3000",
+        "ironbus.cors.allowed-methods[0]=GET",
+        "ironbus.cors.allowed-methods[1]=POST",
+        "ironbus.cors.allowed-headers[0]=Content-Type",
+        "ironbus.cors.exposed-headers[0]=X-Trace-Id",
+        "ironbus.cors.allow-credentials=false",
+        "ironbus.cors.max-age-seconds=3600"
+    }
+)
 class BookingControllerTest {
     @Autowired
     MockMvc mvc;
@@ -72,9 +83,9 @@ class BookingControllerTest {
                     "originStationId":"%s",
                     "destinationStationId":"%s",
                     "passenger":{
-                        "name":"A",
+                        "name":"Alice",
                         "email":"a@b.com",
-                        "phone":"+94"
+                        "phone":"+94710924987"
                     }
                 }"""
                 .formatted(
@@ -116,5 +127,40 @@ class BookingControllerTest {
                         )
                     )
         ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void rejectsInvalidPassengerDetails() throws Exception {
+        String requestBody = """
+            {
+              "journeyId": "%s",
+              "seatId": "%s",
+              "originStationId": "%s",
+              "destinationStationId": "%s",
+              "passenger": {
+                "name": "A",
+                "email": "a@b.com",
+                "phone": "+94"
+              }
+            }
+            """.formatted(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                UUID.randomUUID()
+        );
+
+        mvc.perform(post("/api/v1/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code")
+                        .value("VALIDATION_FAILED"))
+                .andExpect(jsonPath(
+                        "$.fieldErrors['passenger.name']"
+                ).exists())
+                .andExpect(jsonPath(
+                        "$.fieldErrors['passenger.phone']"
+                ).exists());
     }
 }

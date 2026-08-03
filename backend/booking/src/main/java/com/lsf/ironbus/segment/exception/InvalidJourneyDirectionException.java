@@ -1,6 +1,7 @@
 package com.lsf.ironbus.segment.exception;
 
 import com.lsf.ironbus.shared.error.DomainException;
+import org.springframework.http.HttpStatus;
 
 public class InvalidJourneyDirectionException
         extends DomainException {
@@ -13,7 +14,8 @@ public class InvalidJourneyDirectionException
                 "INVALID_JOURNEY_DIRECTION",
                 "Destination " + destinationName
                         + " must appear after origin "
-                        + originName
+                        + originName,
+                HttpStatus.BAD_REQUEST
         );
     }
 }
