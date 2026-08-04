@@ -6,6 +6,7 @@ import com.lsf.ironbus.train.app.command.CreateTrainCommand;
 import com.lsf.ironbus.train.app.response.CoachResponse;
 import com.lsf.ironbus.train.app.response.TrainResponse;
 import com.lsf.ironbus.train.app.service.AddCoachService;
+import com.lsf.ironbus.train.app.service.AdminTrainService;
 import com.lsf.ironbus.train.app.service.CreateTrainService;
 import com.lsf.ironbus.train.enums.CoachReservationMode;
 import com.lsf.ironbus.train.enums.TravelClass;
@@ -33,6 +34,9 @@ class AdminTrainControllerTest {
     @MockitoBean
     AddCoachService addCoachService;
 
+    @MockitoBean
+    AdminTrainService  adminTrainService;
+
     @Test
     void createsTrain() throws Exception {
         UUID id = UUID.randomUUID();
@@ -41,7 +45,7 @@ class AdminTrainControllerTest {
         mockMvc.perform(post("/api/v1/admin/trains")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"code":"UDR-001","name":"Udarata Menike"}
+                                {"code":"UDR-001","name":"Udarata Menike", "active":true}
                                 """
                         )
                 )
@@ -57,7 +61,7 @@ class AdminTrainControllerTest {
         mockMvc.perform(post("/api/v1/admin/trains/{trainId}/coaches", trainId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"coachNumber":"R1","travelClass":"SECOND_CLASS","reservationMode":"RESERVED"}
+                                {"coachNumber":"R1","travelClass":"SECOND_CLASS","reservationMode":"RESERVED", "active":true}
                                 """
                         )
                 )

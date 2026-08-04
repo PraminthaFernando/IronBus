@@ -58,7 +58,8 @@ public class Seat extends BaseEntity {
             SeatType seatType,
             Integer rowNumber,
             Integer columnNumber,
-            Instant createdAt
+            Instant createdAt,
+            boolean active
     ) {
         super(createdAt);
 
@@ -84,11 +85,73 @@ public class Seat extends BaseEntity {
                 columnNumber,
                 "Column number"
         );
-        this.active = true;
+        this.active = active;
+    }
+
+    public static Seat create(
+        Coach coach,
+        String seatNumber,
+        SeatType seatType,
+        Integer rowNumber,
+        Integer columnNumber,
+        boolean active
+    ) {
+        Seat seat = new Seat();
+        seat.coach = Objects.requireNonNull(coach, "Coach is required");
+
+        if (!coach.isReserved()) {
+            throw new IllegalArgumentException(
+                    "Individual seats can only be added to reserved coaches"
+            );
+        }
+
+        seat.seatNumber = normalizeSeatNumber(seatNumber);
+        seat.seatType = Objects.requireNonNull(
+                seatType,
+                "Seat type is required"
+        );
+        seat.rowNumber = validatePositiveNullable(
+                rowNumber,
+                "Row number"
+        );
+        seat.columnNumber = validatePositiveNullable(
+                columnNumber,
+                "Column number"
+        );
+        seat.active = active;
+        return seat;
+    }
+
+    public void update(
+        String seatNumber,
+        SeatType seatType,
+        Integer rowNumber,
+        Integer columnNumber,
+        boolean active
+    ) {
+        this.seatNumber = normalizeSeatNumber(seatNumber);
+        this.seatType = Objects.requireNonNull(
+                seatType,
+                "Seat type is required"
+        );
+        this.rowNumber = validatePositiveNullable(
+                rowNumber,
+                "Row number"
+        );
+        this.columnNumber = validatePositiveNullable(
+                columnNumber,
+                "Column number"
+        );
+        this.active = active;
     }
 
     public void deactivate(Instant updatedAt) {
         this.active = false;
+        markUpdated(updatedAt);
+    }
+
+    public void activate(Instant updatedAt) {
+        this.active = true;
         markUpdated(updatedAt);
     }
 

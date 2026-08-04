@@ -91,7 +91,8 @@ public final class Phase1BFixtures {
                 SeatType.WINDOW,
                 1,
                 1,
-                NOW
+                NOW,
+                true
         );
     }
 

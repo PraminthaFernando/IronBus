@@ -6,14 +6,19 @@ import com.lsf.ironbus.route.app.response.RouteResponse;
 import com.lsf.ironbus.route.app.response.RouteStationResponse;
 import com.lsf.ironbus.route.app.service.AddStationToRouteService;
 import com.lsf.ironbus.route.app.service.CreateRouteService;
+import com.lsf.ironbus.route.app.service.GetRouteStationsService;
+import com.lsf.ironbus.route.domain.Route;
 import com.lsf.ironbus.route.web.request.AddStationToRouteRequest;
 import com.lsf.ironbus.route.web.request.CreateRouteRequest;
+import com.lsf.ironbus.shared.web.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,6 +28,7 @@ public class AdminRouteController {
 
     private final CreateRouteService createRouteService;
     private final AddStationToRouteService addStationToRouteService;
+    private final GetRouteStationsService getRouteStationsService;
 
     @PostMapping
     public ResponseEntity<RouteResponse> createRoute(
@@ -66,5 +72,16 @@ public class AdminRouteController {
                                 + response.id()
                 ))
                 .body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<RouteResponse>> getAllRoutes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        Page<RouteResponse> routes =
+                getRouteStationsService.getAllRoutes(page, size);
+
+        return ResponseEntity.ok(routes);
     }
 }

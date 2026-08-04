@@ -1,6 +1,8 @@
 package com.lsf.ironbus.route.repository;
 
 import com.lsf.ironbus.route.domain.Route;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,4 +21,8 @@ public interface RouteRepository
     List<Route> findAllByActiveTrueOrderByNameAsc();
 
     Optional<Route> findByCodeIgnoreCase(String code);
+
+    long countByActiveTrue();
+
+    Page<Route> findAllByActiveTrueOrderByNameAsc(Pageable pageable);
 }

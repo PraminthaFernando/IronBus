@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(
@@ -37,6 +35,15 @@ public class Train extends BaseEntity {
     @Column(nullable = false)
     private boolean active;
 
+    @OneToMany(
+            mappedBy = "train",
+            cascade = CascadeType.ALL,
+            orphanRemoval = false,
+            fetch = FetchType.LAZY
+    )
+    private final List<Coach> coaches =
+            new ArrayList<>();
+
     public Train(
             UUID id,
             String code,
@@ -51,6 +58,28 @@ public class Train extends BaseEntity {
         this.active = true;
     }
 
+    public static Train create(
+        String code,
+        String name,
+        boolean active
+    ) {
+        Train train = new Train();
+        train.code = normalizeCode(code);
+        train.name = normalizeCode(name);
+        train.active = active;
+        return train;
+    }
+
+    public void  update(
+        String code,
+        String name,
+        boolean active)
+    {
+        this.code = normalizeCode(code);
+        this.name = normalizeCode(name);
+        this.active = active;
+    }
+
     public void rename(String name, Instant updatedAt) {
         this.name = validateName(name);
         markUpdated(updatedAt);
@@ -58,6 +87,11 @@ public class Train extends BaseEntity {
 
     public void deactivate(Instant updatedAt) {
         this.active = false;
+        markUpdated(updatedAt);
+    }
+
+    public void activate(Instant updatedAt) {
+        this.active = true;
         markUpdated(updatedAt);
     }
 

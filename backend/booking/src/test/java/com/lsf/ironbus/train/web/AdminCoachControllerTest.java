@@ -4,6 +4,7 @@ import com.lsf.ironbus.train.app.*;
 import com.lsf.ironbus.train.app.command.AddSeatCommand;
 import com.lsf.ironbus.train.app.response.SeatResponse;
 import com.lsf.ironbus.train.app.service.AddSeatService;
+import com.lsf.ironbus.train.app.service.AdminCoachService;
 import com.lsf.ironbus.train.enums.SeatType;
 import com.lsf.ironbus.train.web.controller.AdminCoachController;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class AdminCoachControllerTest {
     @MockitoBean
     AddSeatService addSeatService;
 
+    @MockitoBean
+    AdminCoachService adminCoachService;
+
     @Test
     void addsSeat() throws Exception {
         UUID coachId = UUID.randomUUID();
@@ -35,7 +39,7 @@ class AdminCoachControllerTest {
         mockMvc.perform(post("/api/v1/admin/coaches/{coachId}/seats", coachId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"seatNumber":"1A","seatType":"WINDOW","rowNumber":1,"columnNumber":1}
+                                {"seatNumber":"1A","seatType":"WINDOW","rowNumber":1,"columnNumber":1, "active":true}
                                 """
                         )
                 )

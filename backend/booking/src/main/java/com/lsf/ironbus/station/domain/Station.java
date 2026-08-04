@@ -51,6 +51,16 @@ public class Station extends BaseEntity {
         this.active = true;
     }
 
+    public void update(
+            String code,
+            String name,
+            boolean active
+    ) {
+        this.code = normalizeCode(code);
+        this.name = validateName(name);
+        this.active = active;
+    }
+
     public void rename(String name, Instant updatedAt) {
         this.name = validateName(name);
         markUpdated(updatedAt);

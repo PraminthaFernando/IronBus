@@ -61,6 +61,10 @@ public class Route extends BaseEntity {
         markUpdated(updatedAt);
     }
 
+    public void touch() {
+        markUpdated();
+    }
+
     private static String normalizeCode(String code) {
         if (code == null || code.isBlank()) {
             throw new IllegalArgumentException("Route code is required");

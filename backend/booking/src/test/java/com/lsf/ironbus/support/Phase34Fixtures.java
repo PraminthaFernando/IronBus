@@ -51,7 +51,7 @@ public final class Phase34Fixtures {
     }
 
     public static Seat seat(Coach c, String no, int row, int col) {
-        return new Seat(UUID.randomUUID(), c, no, col == 1 ? SeatType.WINDOW : SeatType.AISLE, row, col, NOW);
+        return new Seat(UUID.randomUUID(), c, no, col == 1 ? SeatType.WINDOW : SeatType.AISLE, row, col, NOW, true);
     }
 
     public static Journey journey(Train t, Route r) {

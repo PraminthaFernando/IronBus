@@ -18,6 +18,8 @@ public record AddSeatRequest(
         Integer rowNumber,
 
         @Positive
-        Integer columnNumber
+        Integer columnNumber,
+
+        boolean active
 ) {
 }

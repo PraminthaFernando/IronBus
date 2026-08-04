@@ -15,6 +15,8 @@ public record AddCoachRequest(
         TravelClass travelClass,
 
         @NotNull
-        CoachReservationMode reservationMode
+        CoachReservationMode reservationMode,
+
+        boolean active
 ) {
 }

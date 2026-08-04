@@ -43,7 +43,14 @@ class AddSeatServiceTest {
         when(uuidGenerator.generate()).thenReturn(seatId);
         when(timeProvider.now()).thenReturn(NOW);
         when(seatRepository.saveAndFlush(any(Seat.class))).thenAnswer(i -> i.getArgument(0));
-        SeatResponse response = service.add(new AddSeatCommand(coach.getId(), "1A", SeatType.WINDOW, 1, 1));
+        SeatResponse response = service.add(new AddSeatCommand(
+                coach.getId(),
+                "1A",
+                SeatType.WINDOW,
+                1,
+                1,
+                true
+        ));
         assertThat(response.id()).isEqualTo(seatId);
         assertThat(response.seatNumber()).isEqualTo("1A");
     }
@@ -52,7 +59,14 @@ class AddSeatServiceTest {
     void rejectsSeatForUnreservedCoach() {
         Coach coach = unreservedCoach(train("SEAT-SERVICE-2"), "U1");
         when(coachRepository.findByIdAndActiveTrue(coach.getId())).thenReturn(Optional.of(coach));
-        assertThatThrownBy(() -> service.add(new AddSeatCommand(coach.getId(), "1A", SeatType.WINDOW, 1, 1)))
+        assertThatThrownBy(() -> service.add(new AddSeatCommand(
+                coach.getId(),
+                "1A",
+                SeatType.WINDOW,
+                1,
+                1,
+                true
+        )))
                 .isInstanceOf(SeatNotAllowedForUnreservedCoachException.class);
         verify(seatRepository, never()).saveAndFlush(any());
     }

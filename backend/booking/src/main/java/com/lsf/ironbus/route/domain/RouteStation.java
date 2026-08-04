@@ -80,6 +80,73 @@ public class RouteStation extends BaseEntity {
         validateFirstStation();
     }
 
+    public static RouteStation create(
+            Route route,
+            Station station,
+            int sequenceNumber,
+            BigDecimal distanceFromOriginKm,
+            int scheduledOffsetMinutes
+    ) {
+        Objects.requireNonNull(
+                route,
+                "Route must not be null"
+        );
+
+        Objects.requireNonNull(
+                station,
+                "Station must not be null"
+        );
+
+        Objects.requireNonNull(
+                distanceFromOriginKm,
+                "Distance from origin must not be null"
+        );
+
+        if (sequenceNumber < 0) {
+            throw new IllegalArgumentException(
+                    "Route station sequence number must not be negative"
+            );
+        }
+
+        if (distanceFromOriginKm.signum() < 0) {
+            throw new IllegalArgumentException(
+                    "Distance from origin must not be negative"
+            );
+        }
+
+        if (scheduledOffsetMinutes < 0) {
+            throw new IllegalArgumentException(
+                    "Scheduled offset minutes must not be negative"
+            );
+        }
+
+        RouteStation routeStation =
+                new RouteStation();
+
+        routeStation.route = route;
+        routeStation.station = station;
+        routeStation.sequenceNumber =
+                sequenceNumber;
+        routeStation.distanceFromOriginKm =
+                distanceFromOriginKm.setScale(
+                        2,
+                        java.math.RoundingMode.HALF_UP
+                );
+        routeStation.scheduledOffsetMinutes =
+                scheduledOffsetMinutes;
+        routeStation.active = true;
+
+        return routeStation;
+    }
+
+    public void activate() {
+        this.active = true;
+    }
+
+    public void deactivate() {
+        this.active = false;
+    }
+
     private void validateFirstStation() {
         if (sequenceNumber == 0) {
             if (distanceFromOriginKm.compareTo(BigDecimal.ZERO) != 0) {

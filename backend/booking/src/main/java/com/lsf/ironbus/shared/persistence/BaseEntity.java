@@ -38,4 +38,12 @@ public abstract class BaseEntity {
                 "updatedAt is required"
         );
     }
+
+    /**
+     * Marks an aggregate as changed when only its child entities
+     * were updated.
+     */
+    protected final void markUpdated() {
+        this.updatedAt = Instant.now();
+    }
 }
