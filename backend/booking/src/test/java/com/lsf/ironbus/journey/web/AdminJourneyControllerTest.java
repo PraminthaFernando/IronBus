@@ -2,6 +2,7 @@ package com.lsf.ironbus.journey.web;
 
 import com.lsf.ironbus.journey.app.command.ScheduleJourneyCommand;
 import com.lsf.ironbus.journey.app.response.JourneyResponse;
+import com.lsf.ironbus.journey.app.service.AdminJourneyService;
 import com.lsf.ironbus.journey.app.service.ScheduleJourneyService;
 import com.lsf.ironbus.journey.enums.JourneyStatus;
 import com.lsf.ironbus.journey.web.controller.AdminJourneyController;
@@ -26,6 +27,9 @@ class AdminJourneyControllerTest {
     @Autowired MockMvc mockMvc;
     @MockitoBean
     ScheduleJourneyService scheduleJourneyService;
+
+    @MockitoBean
+    AdminJourneyService adminJourneyService;
 
     @Test
     void schedulesJourney() throws Exception {
