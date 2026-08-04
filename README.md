@@ -270,6 +270,7 @@ Docker Compose will:
 | Service | URL |
 |---|---|
 | Frontend | http://localhost:3000 |
+| Admin UI | http://localhost:3000/admin |
 | Backend API | http://localhost:8080/api/v1 |
 | Swagger UI | http://localhost:8080/swagger-ui/index.html |
 | OpenAPI JSON | http://localhost:8080/v3/api-docs |
