@@ -20,22 +20,46 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest(properties = {
-        "spring.flyway.enabled=true",
-        "spring.jpa.hibernate.ddl-auto=validate"
+    "spring.flyway.enabled=true",
+    "spring.jpa.hibernate.ddl-auto=validate"
 })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class SeatRepositoryTest extends PostgreSqlIntegrationTest {
-    @Autowired TrainRepository trainRepository;
-    @Autowired CoachRepository coachRepository;
-    @Autowired SeatRepository seatRepository;
+    @Autowired
+    TrainRepository trainRepository;
+    @Autowired
+    CoachRepository coachRepository;
+    @Autowired
+    SeatRepository seatRepository;
 
     @Test
     void preventsDuplicateSeatNumberWithinSameCoach() {
         Train train = trainRepository.save(new Train(UUID.randomUUID(), "SEAT-TRAIN-1", "Seat Test Train", NOW));
         Coach coach = coachRepository.save(new Coach(UUID.randomUUID(), train, "R1", TravelClass.SECOND_CLASS, CoachReservationMode.RESERVED, NOW));
-        seatRepository.saveAndFlush(new Seat(UUID.randomUUID(), coach, "1A", SeatType.WINDOW, 1, 1, NOW));
+
+        seatRepository.saveAndFlush(new Seat(
+                UUID.randomUUID(),
+                coach,
+                "1A",
+                SeatType.WINDOW,
+                1,
+                1,
+                NOW,
+                true
+        ));
+
         assertThatThrownBy(() -> seatRepository.saveAndFlush(
-                new Seat(UUID.randomUUID(), coach, "1A", SeatType.AISLE, 1, 2, NOW)))
+                new Seat(
+                        UUID.randomUUID(),
+                        coach,
+                        "1A",
+                        SeatType.AISLE,
+                        1,
+                        2,
+                        NOW,
+                        true
+                )
+        ))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -44,8 +68,26 @@ class SeatRepositoryTest extends PostgreSqlIntegrationTest {
         Train train = trainRepository.save(new Train(UUID.randomUUID(), "SEAT-TRAIN-2", "Seat Test Train", NOW));
         Coach first = coachRepository.save(new Coach(UUID.randomUUID(), train, "R1", TravelClass.SECOND_CLASS, CoachReservationMode.RESERVED, NOW));
         Coach second = coachRepository.save(new Coach(UUID.randomUUID(), train, "R2", TravelClass.SECOND_CLASS, CoachReservationMode.RESERVED, NOW));
-        seatRepository.save(new Seat(UUID.randomUUID(), first, "1A", SeatType.WINDOW, 1, 1, NOW));
-        seatRepository.save(new Seat(UUID.randomUUID(), second, "1A", SeatType.WINDOW, 1, 1, NOW));
+        seatRepository.save(new Seat(
+                UUID.randomUUID(),
+                first,
+                "1A",
+                SeatType.WINDOW,
+                1,
+                1,
+                NOW,
+                true
+        ));
+        seatRepository.save(new Seat(
+                UUID.randomUUID(),
+                second,
+                "1A",
+                SeatType.WINDOW,
+                1,
+                1,
+                NOW,
+                true
+        ));
         seatRepository.flush();
         assertThat(seatRepository.count()).isGreaterThanOrEqualTo(2);
     }

@@ -6,7 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-public record AddSeatRequest(
+public record CreateSeatRequest(
+
         @NotBlank
         @Size(max = 20)
         String seatNumber,
@@ -14,9 +15,11 @@ public record AddSeatRequest(
         @NotNull
         SeatType seatType,
 
+        @NotNull
         @Positive
         Integer rowNumber,
 
+        @NotNull
         @Positive
         Integer columnNumber,
 

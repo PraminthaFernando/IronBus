@@ -4,22 +4,28 @@ import com.lsf.ironbus.train.enums.SeatType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.PositiveOrZero;
 
-public record AddSeatRequest(
+public record UpdateSeatRequest(
+
         @NotBlank
-        @Size(max = 20)
         String seatNumber,
 
         @NotNull
         SeatType seatType,
 
+        @NotNull
         @Positive
         Integer rowNumber,
 
+        @NotNull
         @Positive
         Integer columnNumber,
 
-        boolean active
+        boolean active,
+
+        @NotNull
+        @PositiveOrZero
+        Long expectedVersion
 ) {
 }

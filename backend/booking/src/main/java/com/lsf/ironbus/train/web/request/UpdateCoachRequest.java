@@ -4,11 +4,10 @@ import com.lsf.ironbus.train.enums.CoachReservationMode;
 import com.lsf.ironbus.train.enums.TravelClass;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.PositiveOrZero;
 
-public record AddCoachRequest(
+public record UpdateCoachRequest(
         @NotBlank
-        @Size(max = 20)
         String coachNumber,
 
         @NotNull
@@ -17,6 +16,10 @@ public record AddCoachRequest(
         @NotNull
         CoachReservationMode reservationMode,
 
-        boolean active
+        boolean active,
+
+        @NotNull
+        @PositiveOrZero
+        Long expectedVersion
 ) {
 }

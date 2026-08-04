@@ -5,8 +5,10 @@ import com.lsf.ironbus.shared.web.PageableFactory;
 import com.lsf.ironbus.station.app.command.CreateStationCommand;
 import com.lsf.ironbus.station.app.response.StationResponse;
 import com.lsf.ironbus.station.app.service.CreateStationService;
+import com.lsf.ironbus.station.app.service.EditStationService;
 import com.lsf.ironbus.station.app.service.ListStationsService;
 import com.lsf.ironbus.station.web.request.CreateStationRequest;
+import com.lsf.ironbus.station.web.request.UpdateStationRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +30,7 @@ public class AdminStationController {
 
     private final CreateStationService createStationService;
     private final ListStationsService listStationsService;
+    private final EditStationService editStationService;
 
     @PostMapping
     public ResponseEntity<StationResponse> create(
@@ -45,6 +48,17 @@ public class AdminStationController {
                         "/api/v1/admin/stations/" + response.id()
                 ))
                 .body(response);
+    }
+
+    @PutMapping("/{stationId}")
+    public StationResponse update(
+            @PathVariable UUID stationId,
+            @Valid @RequestBody UpdateStationRequest request
+    ) {
+        return editStationService.edit(
+                stationId,
+                request
+        );
     }
 
     @GetMapping

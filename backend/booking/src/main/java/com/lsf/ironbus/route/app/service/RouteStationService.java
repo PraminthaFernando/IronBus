@@ -86,6 +86,34 @@ public class RouteStationService {
         return saved;
     }
 
+    @Transactional
+    public void deactivateByStationId(UUID stationId) {
+        List<RouteStation> routeStations =
+                routeStationRepository.findAllByStationId(
+                        stationId
+                );
+
+        routeStations.stream()
+                .filter(RouteStation::isActive)
+                .forEach(RouteStation::deactivate);
+
+    }
+
+    @Transactional
+    public void activateByStationId(UUID stationId) {
+        List<RouteStation> routeStations =
+                routeStationRepository.findAllByStationId(
+                        stationId
+                );
+
+        routeStations.stream()
+                .filter(routeStation ->
+                        !routeStation.isActive()
+                )
+                .forEach(RouteStation::activate);
+
+    }
+
     private Route getRequired(UUID routeId) {
         return routeRepository.findById(routeId).orElseThrow(
                 () -> new ResourceNotFoundException(

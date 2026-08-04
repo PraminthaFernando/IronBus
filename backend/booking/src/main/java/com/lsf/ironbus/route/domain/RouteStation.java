@@ -139,6 +139,14 @@ public class RouteStation extends BaseEntity {
         return routeStation;
     }
 
+    public void activate() {
+        this.active = true;
+    }
+
+    public void deactivate() {
+        this.active = false;
+    }
+
     private void validateFirstStation() {
         if (sequenceNumber == 0) {
             if (distanceFromOriginKm.compareTo(BigDecimal.ZERO) != 0) {

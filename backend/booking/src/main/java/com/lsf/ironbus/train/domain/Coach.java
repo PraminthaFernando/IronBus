@@ -9,9 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(
@@ -50,6 +48,15 @@ public class Coach extends BaseEntity {
     @Column(nullable = false)
     private boolean active;
 
+    @OneToMany(
+            mappedBy = "coach",
+            cascade = CascadeType.ALL,
+            orphanRemoval = false,
+            fetch = FetchType.LAZY
+    )
+    private final List<Seat> seats =
+            new ArrayList<>();
+
     public Coach(
             UUID id,
             Train train,
@@ -74,12 +81,52 @@ public class Coach extends BaseEntity {
         this.active = true;
     }
 
+    public static Coach create(
+        Train train,
+        String coachNumber,
+        TravelClass travelClass,
+        CoachReservationMode reservationMode,
+        boolean active
+    ) {
+        Coach coach = new Coach();
+        coach.coachNumber = normalizeCoachNumber(coachNumber);
+        coach.train = Objects.requireNonNull(train, "Train is required");;
+        coach.travelClass = Objects.requireNonNull(
+                travelClass,
+                "Travel class is required"
+        );;
+        coach.reservationMode = Objects.requireNonNull(
+                reservationMode,
+                "Reservation mode is required"
+        );;
+        coach.active = active;
+
+        return coach;
+    }
+
+    public void update(
+        String coachNumber,
+        TravelClass travelClass,
+        CoachReservationMode reservationMode,
+        boolean active)
+    {
+        this.coachNumber = normalizeCoachNumber(coachNumber);
+        this.travelClass = travelClass;
+        this.reservationMode = reservationMode;
+        this.active = active;
+    }
+
     public boolean isReserved() {
         return reservationMode == CoachReservationMode.RESERVED;
     }
 
     public void deactivate(Instant updatedAt) {
         this.active = false;
+        markUpdated(updatedAt);
+    }
+
+    public void activate(Instant updatedAt) {
+        this.active = true;
         markUpdated(updatedAt);
     }
 

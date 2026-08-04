@@ -80,6 +80,33 @@ public class Journey extends BaseEntity {
         markUpdated(updatedAt);
     }
 
+    public void updateStatus(JourneyStatus newStatus, Instant updatedAt) {
+        this.status = Objects.requireNonNull(newStatus, "Journey status is required");
+        markUpdated(updatedAt);
+    }
+
+    public void suspendBecauseTrainDeactivated(
+            Instant occurredAt
+    ) {
+        if (status != JourneyStatus.SCHEDULED) {
+            return;
+        }
+
+        this.status = JourneyStatus.SUSPENDED;
+        markUpdated(occurredAt);
+    }
+
+    public void resumeAfterTrainReactivated(
+            Instant occurredAt
+    ) {
+        if (status != JourneyStatus.SUSPENDED) {
+            return;
+        }
+
+        this.status = JourneyStatus.SCHEDULED;
+        markUpdated(occurredAt);
+    }
+
     public void markBoarding(Instant updatedAt) {
         requireStatus(JourneyStatus.SCHEDULED);
         status = JourneyStatus.BOARDING;

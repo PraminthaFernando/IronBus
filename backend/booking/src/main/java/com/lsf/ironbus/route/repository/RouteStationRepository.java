@@ -43,4 +43,8 @@ public interface RouteStationRepository
     findByIdAndActiveTrue(UUID id);
 
     void deleteByRouteId(UUID routeId);
+
+    List<RouteStation> findAllByStationId(
+            UUID stationId
+    );
 }

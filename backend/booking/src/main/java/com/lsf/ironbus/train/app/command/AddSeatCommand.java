@@ -9,6 +9,7 @@ public record AddSeatCommand(
         String seatNumber,
         SeatType seatType,
         Integer rowNumber,
-        Integer columnNumber
+        Integer columnNumber,
+        boolean active
 ) {
 }

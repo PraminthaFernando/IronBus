@@ -40,7 +40,8 @@ class SeatTest {
                 SeatType.WINDOW,
                 1,
                 1,
-                now
+                now,
+                true
         ))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(

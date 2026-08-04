@@ -57,7 +57,8 @@ public class AddSeatService {
                 command.seatType(),
                 command.rowNumber(),
                 command.columnNumber(),
-                timeProvider.now()
+                timeProvider.now(),
+                command.active()
         );
 
         try {

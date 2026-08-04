@@ -123,6 +123,7 @@ CREATE TABLE ib_journeys (
     CONSTRAINT uk_train_departure UNIQUE (train_id, departure_time),
     CONSTRAINT ck_journey_status CHECK (
         status IN (
+            'SUSPENDED',
             'SCHEDULED',
             'BOARDING',
             'DEPARTED',
