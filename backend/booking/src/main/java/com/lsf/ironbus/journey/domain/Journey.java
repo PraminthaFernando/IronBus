@@ -1,6 +1,9 @@
 package com.lsf.ironbus.journey.domain;
 
 import com.lsf.ironbus.journey.enums.JourneyStatus;
+import com.lsf.ironbus.journey.exception.InvalidJourneyDepartureTimeException;
+import com.lsf.ironbus.journey.exception.JourneyNotDeletableException;
+import com.lsf.ironbus.journey.exception.JourneyNotReschedulableException;
 import com.lsf.ironbus.route.domain.Route;
 import com.lsf.ironbus.shared.persistence.BaseEntity;
 import com.lsf.ironbus.train.domain.Train;
@@ -64,6 +67,11 @@ public class Journey extends BaseEntity {
         this.status = JourneyStatus.SCHEDULED;
     }
 
+    public void reactivate(Instant updatedAt) {
+        this.status = JourneyStatus.SCHEDULED;
+        markUpdated(updatedAt);
+    }
+
     public boolean isBookable() {
         return status == JourneyStatus.SCHEDULED
                 || status == JourneyStatus.BOARDING;
@@ -80,9 +88,61 @@ public class Journey extends BaseEntity {
         markUpdated(updatedAt);
     }
 
-    public void updateStatus(JourneyStatus newStatus, Instant updatedAt) {
-        this.status = Objects.requireNonNull(newStatus, "Journey status is required");
-        markUpdated(updatedAt);
+    public void complete(Instant updatedAt) {
+        markCompleted(updatedAt);
+    }
+
+    public void startBoarding(Instant updatedAt) {
+        markBoarding(updatedAt);
+    }
+
+    public void reschedule(
+            Train train,
+            Route route,
+            Instant departureTime,
+            Instant now
+    ) {
+        if (train == null) {
+            throw new IllegalArgumentException(
+                    "Train is required"
+            );
+        }
+
+        if (route == null) {
+            throw new IllegalArgumentException(
+                    "Route is required"
+            );
+        }
+
+        if (departureTime == null) {
+            throw new IllegalArgumentException(
+                    "Departure time is required"
+            );
+        }
+
+        if (now == null) {
+            throw new IllegalArgumentException(
+                    "Current time is required"
+            );
+        }
+
+        if (status != JourneyStatus.SCHEDULED) {
+            throw new JourneyNotReschedulableException(
+                    id,
+                    status
+            );
+        }
+
+        if (!departureTime.isAfter(now)) {
+            throw new InvalidJourneyDepartureTimeException(
+                    departureTime
+            );
+        }
+
+        this.train = train;
+        this.route = route;
+        this.departureTime = departureTime;
+        markUpdated(now);
     }
 
     public void suspendBecauseTrainDeactivated(
@@ -130,6 +190,46 @@ public class Journey extends BaseEntity {
             throw new IllegalStateException(
                     "Journey must be " + expected
                             + " but is currently " + status
+            );
+        }
+    }
+
+    public void assertCanDelete(Instant now) {
+        if (now == null) {
+            throw new IllegalArgumentException(
+                    "Current time is required"
+            );
+        }
+
+        if (status == JourneyStatus.BOARDING) {
+            throw new JourneyNotDeletableException(
+                    id,
+                    status,
+                    "boarding has already started"
+            );
+        }
+
+        if (status == JourneyStatus.DEPARTED) {
+            throw new JourneyNotDeletableException(
+                    id,
+                    status,
+                    "the journey has already departed"
+            );
+        }
+
+        if (status == JourneyStatus.COMPLETED) {
+            throw new JourneyNotDeletableException(
+                    id,
+                    status,
+                    "completed journeys must be retained for history"
+            );
+        }
+
+        if (!departureTime.isAfter(now)) {
+            throw new JourneyNotDeletableException(
+                    id,
+                    status,
+                    "the departure time has already passed"
             );
         }
     }

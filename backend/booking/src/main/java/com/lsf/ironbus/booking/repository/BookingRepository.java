@@ -1,6 +1,7 @@
 package com.lsf.ironbus.booking.repository;
 
 import com.lsf.ironbus.booking.domain.Booking;
+import com.lsf.ironbus.booking.enums.BookingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -54,5 +55,12 @@ public interface BookingRepository
             @Param("passengerEmail")
             String passengerEmail,
             Pageable pageable
+    );
+
+    boolean existsByJourneyId(UUID journeyId);
+
+    boolean existsByJourneyIdAndStatus(
+            UUID journeyId,
+            BookingStatus status
     );
 }

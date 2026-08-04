@@ -8,6 +8,10 @@ import com.lsf.ironbus.route.repository.RouteRepository;
 import com.lsf.ironbus.route.repository.RouteStationRepository;
 import com.lsf.ironbus.shared.error.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,5 +58,24 @@ public class GetRouteStationsService {
                 .stream()
                 .map(RouteResponse::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RouteResponse> getAllRoutes(
+            int page,
+            int size
+    ) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Direction.ASC,
+                        "name"
+                )
+        );
+
+        return routeRepository
+                .findAllByActiveTrueOrderByNameAsc(pageable)
+                .map(RouteResponse::from);
     }
 }

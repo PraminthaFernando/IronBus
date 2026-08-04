@@ -3,6 +3,7 @@ package com.lsf.ironbus.journey.repository;
 import com.lsf.ironbus.journey.domain.Journey;
 import com.lsf.ironbus.journey.enums.JourneyStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface JourneyRepository
-        extends JpaRepository<Journey, UUID> {
+        extends JpaRepository<Journey, UUID>, JpaSpecificationExecutor<Journey> {
 
     boolean existsByTrainIdAndDepartureTime(
             UUID trainId,
@@ -73,5 +74,16 @@ public interface JourneyRepository
             UUID trainId,
             Instant departureTime,
             JourneyStatus status
+    );
+
+    boolean existsByTrainIdAndDepartureTime(
+            UUID trainId,
+            java.time.OffsetDateTime departureTime
+    );
+
+    boolean existsByTrainIdAndDepartureTimeAndIdNot(
+            UUID trainId,
+            Instant departureTime,
+            UUID journeyId
     );
 }
